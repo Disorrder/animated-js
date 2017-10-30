@@ -1,54 +1,37 @@
-/*jshint esversion: 6 */
+import EE from './EventEmitter';
+import * as easing from './easing';
 
-/*
- * constructor options:
- *  app
- *
- * frame options:
- *  offset
- *  delay - when delay<0, frame begins earlier relatively it's offset
- *  duration
- *  easing
- *  animate - array of animatables
- *      targets
- *      from
- *      to
- *      setter
- *
- */
+export default class Story extends EE {
+    static get version() { return '0.1.0'; }
+    static get easing() { return easing; }
 
-
-// --- utils ---
-function isFn(v) { return typeof v === 'function'; }
-if (!pc.QuadraticIn) pc.QuadraticIn = function(k) { return k * k; };
-
-// ---
-// TODO: mb rename frame to keyframe everywhere?
-
-class AnimationTimeline {
     constructor(options = {}) {
-        pc.events.attach(this);
-        this.app = options.app || pc.app;
-        this.app.on('update', this._update, this);
-
         this.active = false;
         this.__name = options.name;
 
         this.keyframes = [];
+
         this.time = 0;
         this.timeEnd = 0;
         this.timeScale = options.timeScale || 1;
         this.repeat = options.repeat || 1;
-
         this.duration = 0;
+
+        this._tick();
     }
 
     get lastKeyframe() {
         return this.keyframes[this.keyframes.length-1] || null;
     }
 
+    _tick(time = 0) {
+        requestAnimationFrame(this._tick.bind(this));
+        this._update(this._lastTick - time);
+        this._lastTick = time;
+    }
+
     add(frame) {
-        if (frame instanceof AnimationTimeline) {
+        if (frame instanceof Story) {
             frame.keyframes.forEach((v) => this._addFrame(v));
         } else {
             this._addFrame(frame);
@@ -60,7 +43,7 @@ class AnimationTimeline {
         if (frame.delay == null) frame.delay = 0;
         if (frame.duration == null) frame.duration = 1000;
         if (frame.repeat == null) frame.repeat = 1;
-        if (frame.easing == null) frame.easing = pc.QuadraticIn;
+        if (frame.easing == null) frame.easing = easing.QuadraticIn;
         // if (frame.animate && !Array.isArray(frame.animate)) frame.animate = [frame.animate];
         this._timeline = this;
 
@@ -125,36 +108,35 @@ class AnimationTimeline {
         return this;
     }
 
-    _update(dt) {
-        if (this.active) {
-            this.keyframes.forEach((frame) => {
-                if (this.time >= frame._startTime && this.time <= frame._endTime) {
-                    if (!frame._began) this._begin(frame);
-                    this._run(frame);
-                }
-
-                if (this.time > frame._endTime) {
-                    if (frame._began && !frame._completed) this._complete(frame);
-                }
-            });
-
-            if (this.time <= 0) {
-                this.fire('begin');
-            }
-            this.fire('update', dt);
-
-            if (this.time >= this.endTime) {
-                this.repeat--;
-                if (this.repeat) {
-                    return this.replay();
-                }
-                this.stop();
-                this.fire('complete');
-                return;
+    _update(dt = 0) {
+        if (!this.active) return;
+        this.keyframes.forEach((frame) => {
+            if (this.time >= frame._startTime && this.time <= frame._endTime) {
+                if (!frame._began) this._begin(frame);
+                this._run(frame);
             }
 
-            this.time += dt * 1000 * this.timeScale;
+            if (this.time > frame._endTime) {
+                if (frame._began && !frame._completed) this._complete(frame);
+            }
+        });
+
+        if (this.time <= 0) {
+            this.fire('begin');
         }
+        this.fire('update', dt);
+
+        if (this.time >= this.endTime) {
+            this.repeat--;
+            if (this.repeat) {
+                return this.replay();
+            }
+            this.stop();
+            this.fire('complete');
+            return;
+        }
+
+        this.time += dt * 1000 * this.timeScale;
     }
 
     _begin(frame) {
@@ -203,5 +185,21 @@ class AnimationTimeline {
     }
 }
 
-if (pc.AnimationTimeline) console.warn('AnimationTimeline is already exists!');
-pc.AnimationTimeline = AnimationTimeline;
+if (!window.Story) window.Story = Story;
+
+// PlayCanvas
+
+if (typeof pc !== 'undefined') {
+    class StoryPC extends Story {
+        constructor(options = {}) {
+            super(options);
+            this.app = options.app || pc.app;
+            this.app.on('update', this._update, this);
+        }
+
+        _tick() { /* noop */ }
+    }
+
+    if (pc.Story) console.warn('pc.Story is already exists!');
+    pc.Story = StoryPC;
+}

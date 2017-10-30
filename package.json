@@ -1,0 +1,15 @@
+{
+  "name": "story-js",
+  "version": "0.1.0",
+  "devDependencies": {
+    "webpack": "^3.8.1"
+  },
+  "dependencies": {},
+  "scripts": {
+    "build": "webpack",
+    "start": "npm run build"
+  },
+  "engine": {
+    "node": ">=6.6.0"
+  }
+}

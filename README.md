@@ -1,2 +1,2 @@
 # story-js
-Timeline for simple animations. Inpired by @animejs
+Timeline for simple animations. Inspired by @animejs
