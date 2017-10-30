@@ -1,0 +1,9 @@
+npm-debug.log
+.build
+.tmp
+node_modules
+bower_components
+typings
+config.js
+app/config.js
+.DS_Store
