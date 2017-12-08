@@ -7,6 +7,6 @@ module.exports = {
     entry: './index.js',
     output: {
         path: path.resolve('./dist'),
-        filename: "story.js"
+        filename: "animated.js"
     }
 };

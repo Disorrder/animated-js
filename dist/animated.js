@@ -74,8 +74,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-class Story extends __WEBPACK_IMPORTED_MODULE_0__EventEmitter__["a" /* default */] {
-    static get version() { return '0.0.1'; }
+class Animated extends __WEBPACK_IMPORTED_MODULE_0__EventEmitter__["a" /* default */] {
+    static get version() { return '0.1.0'; }
     static get easing() { return __WEBPACK_IMPORTED_MODULE_1__easing__; }
 
     constructor(options = {}) {
@@ -104,7 +104,7 @@ class Story extends __WEBPACK_IMPORTED_MODULE_0__EventEmitter__["a" /* default *
     }
 
     add(frame) {
-        if (frame instanceof Story) {
+        if (frame instanceof Animated) {
             frame.keyframes.forEach((v) => this._addFrame(v));
         } else {
             this._addFrame(frame);
@@ -116,7 +116,7 @@ class Story extends __WEBPACK_IMPORTED_MODULE_0__EventEmitter__["a" /* default *
         if (frame.delay == null) frame.delay = 0;
         if (frame.duration == null) frame.duration = 1000;
         if (frame.repeat == null) frame.repeat = 1;
-        if (frame.easing == null) frame.easing = __WEBPACK_IMPORTED_MODULE_1__easing__["QuadraticIn"];
+        if (frame.easing == null) frame.easing = Animated.easing.QuadraticIn;
         // if (frame.animate && !Array.isArray(frame.animate)) frame.animate = [frame.animate];
         this._timeline = this;
 
@@ -257,15 +257,15 @@ class Story extends __WEBPACK_IMPORTED_MODULE_0__EventEmitter__["a" /* default *
         if (frame.complete) frame.complete(frame);
     }
 }
-/* harmony export (immutable) */ __webpack_exports__["default"] = Story;
+/* harmony export (immutable) */ __webpack_exports__["default"] = Animated;
 
 
-if (!window.Story) window.Story = Story;
+if (!window.Animated) window.Animated = Animated;
 
 // PlayCanvas
 
-if (typeof pc !== 'undefined') {
-    class StoryPC extends Story {
+if (pc != null) {
+    class AnimatedPC extends Animated {
         constructor(options = {}) {
             super(options);
             this.app = options.app || pc.app;
@@ -275,8 +275,8 @@ if (typeof pc !== 'undefined') {
         _tick() { /* noop */ }
     }
 
-    if (pc.Story) console.warn('pc.Story is already exists!');
-    pc.Story = StoryPC;
+    if (pc.Animated) console.warn('pc.Animated is already exists!');
+    pc.Animated = AnimatedPC;
 }
 
 
@@ -331,205 +331,176 @@ EventEmitter.prototype.fire = EventEmitter.prototype.emit;
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (immutable) */ __webpack_exports__["Linear"] = Linear;
-/* harmony export (immutable) */ __webpack_exports__["QuadraticIn"] = QuadraticIn;
-/* harmony export (immutable) */ __webpack_exports__["QuadraticOut"] = QuadraticOut;
-/* harmony export (immutable) */ __webpack_exports__["QuadraticInOut"] = QuadraticInOut;
-/* harmony export (immutable) */ __webpack_exports__["CubicIn"] = CubicIn;
-/* harmony export (immutable) */ __webpack_exports__["CubicOut"] = CubicOut;
-/* harmony export (immutable) */ __webpack_exports__["CubicInOut"] = CubicInOut;
-/* harmony export (immutable) */ __webpack_exports__["QuarticIn"] = QuarticIn;
-/* harmony export (immutable) */ __webpack_exports__["QuarticOut"] = QuarticOut;
-/* harmony export (immutable) */ __webpack_exports__["QuarticInOut"] = QuarticInOut;
-/* harmony export (immutable) */ __webpack_exports__["QuinticIn"] = QuinticIn;
-/* harmony export (immutable) */ __webpack_exports__["QuinticOut"] = QuinticOut;
-/* harmony export (immutable) */ __webpack_exports__["QuinticInOut"] = QuinticInOut;
-/* harmony export (immutable) */ __webpack_exports__["SineIn"] = SineIn;
-/* harmony export (immutable) */ __webpack_exports__["SineOut"] = SineOut;
-/* harmony export (immutable) */ __webpack_exports__["SineInOut"] = SineInOut;
-/* harmony export (immutable) */ __webpack_exports__["ExponentialIn"] = ExponentialIn;
-/* harmony export (immutable) */ __webpack_exports__["ExponentialOut"] = ExponentialOut;
-/* harmony export (immutable) */ __webpack_exports__["ExponentialInOut"] = ExponentialInOut;
-/* harmony export (immutable) */ __webpack_exports__["CircularIn"] = CircularIn;
-/* harmony export (immutable) */ __webpack_exports__["CircularOut"] = CircularOut;
-/* harmony export (immutable) */ __webpack_exports__["CircularInOut"] = CircularInOut;
-/* harmony export (immutable) */ __webpack_exports__["ElasticIn"] = ElasticIn;
-/* harmony export (immutable) */ __webpack_exports__["ElasticOut"] = ElasticOut;
-/* harmony export (immutable) */ __webpack_exports__["ElasticInOut"] = ElasticInOut;
-/* harmony export (immutable) */ __webpack_exports__["BackIn"] = BackIn;
-/* harmony export (immutable) */ __webpack_exports__["BackOut"] = BackOut;
-/* harmony export (immutable) */ __webpack_exports__["BackInOut"] = BackInOut;
-/* harmony export (immutable) */ __webpack_exports__["BounceIn"] = BounceIn;
-/* harmony export (immutable) */ __webpack_exports__["BounceOut"] = BounceOut;
-/* harmony export (immutable) */ __webpack_exports__["BounceInOut"] = BounceInOut;
-function Linear(k) {
-    return k;
-};
+/* harmony default export */ __webpack_exports__["default"] = ({
+    Linear(k) {
+        return k;
+    },
 
-function QuadraticIn(k) {
-    return k * k;
-};
+    QuadraticIn(k) {
+        return k * k;
+    },
 
-function QuadraticOut(k) {
-    return k * (2 - k);
-};
+    QuadraticOut(k) {
+        return k * (2 - k);
+    },
 
-function QuadraticInOut(k) {
-    if ((k *= 2) < 1) {
-        return 0.5 * k * k;
-    }
-    return -0.5 * (--k * (k - 2) - 1);
-};
+    QuadraticInOut(k) {
+        if ((k *= 2) < 1) {
+            return 0.5 * k * k;
+        }
+        return -0.5 * (--k * (k - 2) - 1);
+    },
 
-function CubicIn(k) {
-    return k * k * k;
-};
+    CubicIn(k) {
+        return k * k * k;
+    },
 
-function CubicOut(k) {
-    return --k * k * k + 1;
-};
+    CubicOut(k) {
+        return --k * k * k + 1;
+    },
 
-function CubicInOut(k) {
-    if ( ( k *= 2 ) < 1 ) return 0.5 * k * k * k;
-    return 0.5 * ( ( k -= 2 ) * k * k + 2 );
-};
+    CubicInOut(k) {
+        if ( ( k *= 2 ) < 1 ) return 0.5 * k * k * k;
+        return 0.5 * ( ( k -= 2 ) * k * k + 2 );
+    },
 
-function QuarticIn(k) {
+    QuarticIn(k) {
         return k * k * k * k;
-};
+    },
 
-function QuarticOut(k) {
-    return 1 - ( --k * k * k * k );
-};
+    QuarticOut(k) {
+        return 1 - ( --k * k * k * k );
+    },
 
-function QuarticInOut(k) {
-    if ( ( k *= 2 ) < 1) return 0.5 * k * k * k * k;
-    return - 0.5 * ( ( k -= 2 ) * k * k * k - 2 );
-};
+    QuarticInOut(k) {
+        if ( ( k *= 2 ) < 1) return 0.5 * k * k * k * k;
+        return - 0.5 * ( ( k -= 2 ) * k * k * k - 2 );
+    },
 
-function QuinticIn(k) {
+    QuinticIn(k) {
         return k * k * k * k * k;
-};
+    },
 
-function QuinticOut(k) {
+    QuinticOut(k) {
         return --k * k * k * k * k + 1;
-};
+    },
 
-function QuinticInOut(k) {
-    if ( ( k *= 2 ) < 1 ) return 0.5 * k * k * k * k * k;
-    return 0.5 * ( ( k -= 2 ) * k * k * k * k + 2 );
-};
+    QuinticInOut(k) {
+        if ( ( k *= 2 ) < 1 ) return 0.5 * k * k * k * k * k;
+        return 0.5 * ( ( k -= 2 ) * k * k * k * k + 2 );
+    },
 
-function SineIn(k) {
-    if (k === 0) return 0;
-    if (k === 1) return 1;
-    return 1 - Math.cos( k * Math.PI / 2 );
-};
+    SineIn(k) {
+        if (k === 0) return 0;
+        if (k === 1) return 1;
+        return 1 - Math.cos( k * Math.PI / 2 );
+    },
 
-function SineOut(k) {
-    if (k === 0) return 0;
-    if (k === 1) return 1;
-    return Math.sin( k * Math.PI / 2 );
-};
+    SineOut(k) {
+        if (k === 0) return 0;
+        if (k === 1) return 1;
+        return Math.sin( k * Math.PI / 2 );
+    },
 
-function SineInOut(k) {
-    if (k === 0) return 0;
-    if (k === 1) return 1;
-    return 0.5 * ( 1 - Math.cos( Math.PI * k ) );
-};
+    SineInOut(k) {
+        if (k === 0) return 0;
+        if (k === 1) return 1;
+        return 0.5 * ( 1 - Math.cos( Math.PI * k ) );
+    },
 
-function ExponentialIn(k) {
-    return k === 0 ? 0 : Math.pow( 1024, k - 1 );
-};
+    ExponentialIn(k) {
+        return k === 0 ? 0 : Math.pow( 1024, k - 1 );
+    },
 
-function ExponentialOut(k) {
-    return k === 1 ? 1 : 1 - Math.pow( 2, - 10 * k );
-};
+    ExponentialOut(k) {
+        return k === 1 ? 1 : 1 - Math.pow( 2, - 10 * k );
+    },
 
-function ExponentialInOut(k) {
-    if ( k === 0 ) return 0;
-    if ( k === 1 ) return 1;
-    if ( ( k *= 2 ) < 1 ) return 0.5 * Math.pow( 1024, k - 1 );
-    return 0.5 * ( - Math.pow( 2, - 10 * ( k - 1 ) ) + 2 );
-};
+    ExponentialInOut(k) {
+        if ( k === 0 ) return 0;
+        if ( k === 1 ) return 1;
+        if ( ( k *= 2 ) < 1 ) return 0.5 * Math.pow( 1024, k - 1 );
+        return 0.5 * ( - Math.pow( 2, - 10 * ( k - 1 ) ) + 2 );
+    },
 
-function CircularIn(k) {
-    return 1 - Math.sqrt( 1 - k * k );
-};
+    CircularIn(k) {
+        return 1 - Math.sqrt( 1 - k * k );
+    },
 
-function CircularOut(k) {
-    return Math.sqrt( 1 - ( --k * k ) );
-};
+    CircularOut(k) {
+        return Math.sqrt( 1 - ( --k * k ) );
+    },
 
-function CircularInOut(k) {
-    if ( ( k *= 2 ) < 1) return - 0.5 * ( Math.sqrt( 1 - k * k) - 1);
-    return 0.5 * ( Math.sqrt( 1 - ( k -= 2) * k) + 1);
-};
+    CircularInOut(k) {
+        if ( ( k *= 2 ) < 1) return - 0.5 * ( Math.sqrt( 1 - k * k) - 1);
+        return 0.5 * ( Math.sqrt( 1 - ( k -= 2) * k) + 1);
+    },
 
-function ElasticIn(k) {
-    var s, a = 0.1, p = 0.4;
-    if ( k === 0 ) return 0;
-    if ( k === 1 ) return 1;
-    if ( !a || a < 1 ) { a = 1; s = p / 4; }
-    else s = p * Math.asin( 1 / a ) / ( 2 * Math.PI );
-    return - ( a * Math.pow( 2, 10 * ( k -= 1 ) ) * Math.sin( ( k - s ) * ( 2 * Math.PI ) / p ) );
-};
+    ElasticIn(k) {
+        var s, a = 0.1, p = 0.4;
+        if ( k === 0 ) return 0;
+        if ( k === 1 ) return 1;
+        if ( !a || a < 1 ) { a = 1; s = p / 4; }
+        else s = p * Math.asin( 1 / a ) / ( 2 * Math.PI );
+        return - ( a * Math.pow( 2, 10 * ( k -= 1 ) ) * Math.sin( ( k - s ) * ( 2 * Math.PI ) / p ) );
+    },
 
-function ElasticOut(k) {
-    var s, a = 0.1, p = 0.4;
-    if ( k === 0 ) return 0;
-    if ( k === 1 ) return 1;
-    if ( !a || a < 1 ) { a = 1; s = p / 4; }
-    else s = p * Math.asin( 1 / a ) / ( 2 * Math.PI );
-    return ( a * Math.pow( 2, - 10 * k) * Math.sin( ( k - s ) * ( 2 * Math.PI ) / p ) + 1 );
-};
+    ElasticOut(k) {
+        var s, a = 0.1, p = 0.4;
+        if ( k === 0 ) return 0;
+        if ( k === 1 ) return 1;
+        if ( !a || a < 1 ) { a = 1; s = p / 4; }
+        else s = p * Math.asin( 1 / a ) / ( 2 * Math.PI );
+        return ( a * Math.pow( 2, - 10 * k) * Math.sin( ( k - s ) * ( 2 * Math.PI ) / p ) + 1 );
+    },
 
-function ElasticInOut(k) {
-    var s, a = 0.1, p = 0.4;
-    if ( k === 0 ) return 0;
-    if ( k === 1 ) return 1;
-    if ( !a || a < 1 ) { a = 1; s = p / 4; }
-    else s = p * Math.asin( 1 / a ) / ( 2 * Math.PI );
-    if ( ( k *= 2 ) < 1 ) return - 0.5 * ( a * Math.pow( 2, 10 * ( k -= 1 ) ) * Math.sin( ( k - s ) * ( 2 * Math.PI ) / p ) );
-    return a * Math.pow( 2, -10 * ( k -= 1 ) ) * Math.sin( ( k - s ) * ( 2 * Math.PI ) / p ) * 0.5 + 1;
-};
+    ElasticInOut(k) {
+        var s, a = 0.1, p = 0.4;
+        if ( k === 0 ) return 0;
+        if ( k === 1 ) return 1;
+        if ( !a || a < 1 ) { a = 1; s = p / 4; }
+        else s = p * Math.asin( 1 / a ) / ( 2 * Math.PI );
+        if ( ( k *= 2 ) < 1 ) return - 0.5 * ( a * Math.pow( 2, 10 * ( k -= 1 ) ) * Math.sin( ( k - s ) * ( 2 * Math.PI ) / p ) );
+        return a * Math.pow( 2, -10 * ( k -= 1 ) ) * Math.sin( ( k - s ) * ( 2 * Math.PI ) / p ) * 0.5 + 1;
+    },
 
-function BackIn(k) {
+    BackIn(k) {
         var s = 1.70158;
         return k * k * ( ( s + 1 ) * k - s );
-};
+    },
 
-function BackOut(k) {
-    var s = 1.70158;
-    return --k * k * ( ( s + 1 ) * k + s ) + 1;
-};
+    BackOut(k) {
+        var s = 1.70158;
+        return --k * k * ( ( s + 1 ) * k + s ) + 1;
+    },
 
-function BackInOut(k) {
-    var s = 1.70158 * 1.525;
-    if ( ( k *= 2 ) < 1 ) return 0.5 * ( k * k * ( ( s + 1 ) * k - s ) );
-    return 0.5 * ( ( k -= 2 ) * k * ( ( s + 1 ) * k + s ) + 2 );
-};
+    BackInOut(k) {
+        var s = 1.70158 * 1.525;
+        if ( ( k *= 2 ) < 1 ) return 0.5 * ( k * k * ( ( s + 1 ) * k - s ) );
+        return 0.5 * ( ( k -= 2 ) * k * ( ( s + 1 ) * k + s ) + 2 );
+    },
 
-function BounceIn(k) {
-    return 1 - BounceOut( 1 - k );
-};
+    BounceIn(k) {
+        return 1 - BounceOut( 1 - k );
+    },
 
-function BounceOut(k) {
-    if ( k < ( 1 / 2.75 ) ) {
-        return 7.5625 * k * k;
-    } else if ( k < ( 2 / 2.75 ) ) {
-        return 7.5625 * ( k -= ( 1.5 / 2.75 ) ) * k + 0.75;
-    } else if ( k < ( 2.5 / 2.75 ) ) {
-        return 7.5625 * ( k -= ( 2.25 / 2.75 ) ) * k + 0.9375;
-    } else {
-        return 7.5625 * ( k -= ( 2.625 / 2.75 ) ) * k + 0.984375;
-    }
-};
+    BounceOut(k) {
+        if ( k < ( 1 / 2.75 ) ) {
+            return 7.5625 * k * k;
+        } else if ( k < ( 2 / 2.75 ) ) {
+            return 7.5625 * ( k -= ( 1.5 / 2.75 ) ) * k + 0.75;
+        } else if ( k < ( 2.5 / 2.75 ) ) {
+            return 7.5625 * ( k -= ( 2.25 / 2.75 ) ) * k + 0.9375;
+        } else {
+            return 7.5625 * ( k -= ( 2.625 / 2.75 ) ) * k + 0.984375;
+        }
+    },
 
-function BounceInOut(k) {
-    if ( k < 0.5 ) return BounceIn( k * 2 ) * 0.5;
-    return BounceOut( k * 2 - 1 ) * 0.5 + 0.5;
-};
+    BounceInOut(k) {
+        if ( k < 0.5 ) return BounceIn( k * 2 ) * 0.5;
+        return BounceOut( k * 2 - 1 ) * 0.5 + 0.5;
+    },
+});
 
 
 /***/ })

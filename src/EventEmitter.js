@@ -9,10 +9,11 @@ export default class EventEmitter {
     }
 
     emit(name, ...args) {
-        if (!name || !this._callbacks[name]) return this;
+        if (!name || !this._callbacks || !this._callbacks[name]) return this;
         this._callbacks[name].forEach(cb => cb.apply(null, args));
         return this;
     }
+    fire(name, ...args) { return this.emit(name, ...args); }
 
     off(name, cb) {
         if (!name) return this;
@@ -28,9 +29,7 @@ export default class EventEmitter {
     static mixin(target) {
         Object.getOwnPropertyNames(EventEmitter.prototype).forEach((k) => {
             if (k === 'constructor') return;
-            target.prototype[k] = EventEmitter.prototype[k];
+            target.prototype[k] = EventEmitter.prototype[k].bind(target);
         });
     }
 }
-
-EventEmitter.prototype.fire = EventEmitter.prototype.emit;
