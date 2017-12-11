@@ -38,7 +38,7 @@ class EventEmitter {
 // ------
 
 class Animated {
-    static get version() { return '0.1.0'; }
+    static get version() { return '0.1.1'; }
     static get easing() { return easing; }
 
     constructor(options = {}) {

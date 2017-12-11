@@ -74,8 +74,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-class Animated extends __WEBPACK_IMPORTED_MODULE_0__EventEmitter__["a" /* default */] {
-    static get version() { return '0.1.0'; }
+class Animated {
+    static get version() { return '0.1.1'; }
     static get easing() { return __WEBPACK_IMPORTED_MODULE_1__easing__; }
 
     constructor(options = {}) {
@@ -90,16 +90,24 @@ class Animated extends __WEBPACK_IMPORTED_MODULE_0__EventEmitter__["a" /* defaul
         this.repeat = options.repeat || 1;
         this.duration = 0;
 
-        this._tick();
+        setTimeout(this.startAnimationLoop.bind(this));
     }
 
     get lastKeyframe() {
         return this.keyframes[this.keyframes.length-1] || null;
     }
 
-    _tick(time = 0) {
-        requestAnimationFrame(this._tick.bind(this));
-        this._update(this._lastTick - time);
+    startAnimationLoop() {
+        this._tickBound = this._tick.bind(this);
+        requestAnimationFrame((time) => {
+            this._lastTick = time;
+            this._tick(time);
+        });
+    }
+
+    _tick(time = this._lastTick) {
+        requestAnimationFrame(this._tickBound);
+        this._update(time - this._lastTick || 16);
         this._lastTick = time;
     }
 
@@ -184,9 +192,10 @@ class Animated extends __WEBPACK_IMPORTED_MODULE_0__EventEmitter__["a" /* defaul
     _update(dt = 0) {
         if (!this.active) return;
         this.keyframes.forEach((frame) => {
-            if (this.time >= frame._startTime && this.time <= frame._endTime) {
+            if (frame._completed) return;
+            if (this.time >= frame._startTime) {
                 if (!frame._began) this._begin(frame);
-                this._run(frame);
+                if (this.time <= frame._endTime) this._run(frame);
             }
 
             if (this.time > frame._endTime) {
@@ -209,7 +218,7 @@ class Animated extends __WEBPACK_IMPORTED_MODULE_0__EventEmitter__["a" /* defaul
             return;
         }
 
-        this.time += dt * 1000 * this.timeScale;
+        this.time += dt * this.timeScale;
     }
 
     _begin(frame) {
@@ -231,7 +240,7 @@ class Animated extends __WEBPACK_IMPORTED_MODULE_0__EventEmitter__["a" /* defaul
 
     _run(frame) {
         frame._time = (this.time - frame._startTime) / frame.duration;
-        frame._time = pc.math.clamp(frame._time, 0, frame.repeat);
+        frame._time = Math.clamp(frame._time, 0, frame.repeat);
 
         if (frame._time > 1) { // repeating. TODO: add yoyo
             frame._time -= Math.floor(frame._time);
@@ -256,20 +265,51 @@ class Animated extends __WEBPACK_IMPORTED_MODULE_0__EventEmitter__["a" /* defaul
         frame._completed = true;
         if (frame.complete) frame.complete(frame);
     }
+
+    static __test() {
+        var target = {position: {x: 10}};
+        var anim = new Animated()
+        .add({
+            delay: 1000,
+            animate: [{
+                target: target.position,
+                to: {x: 20}
+            }],
+            begin() { console.log('frame 0 begin', target.position.x, anim.time.toFixed(2)); },
+            complete() { console.log('frame 0 complete', target.position.x, anim.time.toFixed(2)); },
+            run() { console.log('frame 0 run', target.position.x, anim.time.toFixed(2)); }
+        })
+        .add({
+            duration: 500,
+            animate: [{
+                target: target.position,
+                to: {x: 0}
+            }],
+            begin() { console.log('frame 1 begin', target.position.x, anim.time.toFixed(2)); },
+            complete() { console.log('frame 1 complete', target.position.x, anim.time.toFixed(2)); },
+            run() { console.log('frame 1 run', target.position.x, anim.time.toFixed(2)); }
+        })
+        .play();
+    }
 }
 /* harmony export (immutable) */ __webpack_exports__["default"] = Animated;
 
+
+__WEBPACK_IMPORTED_MODULE_0__EventEmitter__["a" /* default */].mixin(Animated);
 
 if (!window.Animated) window.Animated = Animated;
 
 // PlayCanvas
 
-if (pc != null) {
+if (typeof pc !== 'undefined') {
     class AnimatedPC extends Animated {
         constructor(options = {}) {
             super(options);
-            this.app = options.app || pc.app;
-            this.app.on('update', this._update, this);
+            this.app = options.app || pc.script.app;
+        }
+
+        startAnimationLoop() {
+            this.app.on('update', (dt) => this._update(dt * 1000), this);
         }
 
         _tick() { /* noop */ }
@@ -278,6 +318,17 @@ if (pc != null) {
     if (pc.Animated) console.warn('pc.Animated is already exists!');
     pc.Animated = AnimatedPC;
 }
+
+// utils
+if (!Math.clamp) Math.clamp = function (value, min, max) {
+    if (value >= max) {
+        return max;
+    }
+    if (value <= min) {
+        return min;
+    }
+    return value;
+};
 
 
 /***/ }),
@@ -296,10 +347,11 @@ class EventEmitter {
     }
 
     emit(name, ...args) {
-        if (!name || !this._callbacks[name]) return this;
+        if (!name || !this._callbacks || !this._callbacks[name]) return this;
         this._callbacks[name].forEach(cb => cb.apply(null, args));
         return this;
     }
+    fire(name, ...args) { return this.emit(name, ...args); }
 
     off(name, cb) {
         if (!name) return this;
@@ -315,14 +367,12 @@ class EventEmitter {
     static mixin(target) {
         Object.getOwnPropertyNames(EventEmitter.prototype).forEach((k) => {
             if (k === 'constructor') return;
-            target.prototype[k] = EventEmitter.prototype[k];
+            target.prototype[k] = EventEmitter.prototype[k].bind(target);
         });
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = EventEmitter;
 
-
-EventEmitter.prototype.fire = EventEmitter.prototype.emit;
 
 
 /***/ }),
