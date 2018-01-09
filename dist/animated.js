@@ -76,7 +76,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 class Animated {
     static get version() { return '0.1.1'; }
-    static get easing() { return __WEBPACK_IMPORTED_MODULE_1__easing__; }
+    static get easing() { return __WEBPACK_IMPORTED_MODULE_1__easing__["a" /* default */]; }
 
     constructor(options = {}) {
         this.active = false;
@@ -380,8 +380,7 @@ class EventEmitter {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony default export */ __webpack_exports__["default"] = ({
+/* harmony default export */ __webpack_exports__["a"] = ({
     Linear(k) {
         return k;
     },

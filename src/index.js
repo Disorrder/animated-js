@@ -1,5 +1,5 @@
 import EventEmitter from './EventEmitter';
-import * as easing from './easing';
+import easing from './easing';
 
 export default class Animated {
     static get version() { return '0.1.1'; }

@@ -1,6 +1,7 @@
 {
   "name": "animated-js",
   "version": "0.1.1",
+  "main": "dist/animated.js",
   "devDependencies": {
     "webpack": "^3.8.1"
   },
