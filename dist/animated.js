@@ -351,7 +351,9 @@ class EventEmitter {
         this._callbacks[name].forEach(cb => cb.apply(null, args));
         return this;
     }
-    fire(name, ...args) { return this.emit(name, ...args); }
+    fire(name, ...args) {
+        return this.emit(name, ...args);
+    }
 
     off(name, cb) {
         if (!name) return this;
@@ -367,7 +369,7 @@ class EventEmitter {
     static mixin(target) {
         Object.getOwnPropertyNames(EventEmitter.prototype).forEach((k) => {
             if (k === 'constructor') return;
-            target.prototype[k] = EventEmitter.prototype[k].bind(target);
+            target.prototype[k] = EventEmitter.prototype[k];
         });
     }
 }
