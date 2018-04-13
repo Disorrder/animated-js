@@ -118,6 +118,9 @@ export default class Animated {
 
     _update(dt = 0) {
         if (!this.active) return;
+        dt *= this.timeScale;
+        // increment time here?
+
         this.keyframes.forEach((frame) => {
             if (frame._completed) return;
             if (this.time >= frame._startTime) {
@@ -145,10 +148,11 @@ export default class Animated {
             return;
         }
 
-        this.time += dt * this.timeScale;
+        this.time += dt;
     }
 
     _begin(frame) {
+        if (frame.preCalculate) frame.preCalculate(frame);
         if (frame.animate) {
             frame.animate.forEach((anim) => {
                 anim._target = typeof anim.target === 'function' ? anim.target() : anim.target;

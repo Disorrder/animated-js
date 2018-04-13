@@ -23,24 +23,25 @@ var anim = new Animated()
 ```
 
 ## Animated methods
-**add(frame)**
-**play()**
-**pause()**
-**stop()**
-**replay()**
+**add(frame)**  
+**play()**  
+**pause()**  
+**stop()**  
+**replay()**  
 
 ## Keyframe type
-**repeat** *default: 1* - 
-**delay** *default: 0* - 
-**duration** *default: 1000* - 
-`Animatable[]` **animate** - Array of Animatables
+**repeat** *default: 1* -  
+**delay** *default: 0* -  
+**duration** *default: 1000* -  
+`Animatable[]` **animate** - Array of Animatables  
 
-**begin(frame)** - 
-**run(frame)** - 
-**complete(frame)** - 
+**preCalculate(frame)** -  
+**begin(frame)** -  
+**run(frame)** -  
+**complete(frame)** -  
 
 ## Animatable type
-`Object` **target** -
-`Object` **from** -
-`Object` **to** -
-**setter(fn)** -
+`Object` **target** -  
+`Object` **from** -  
+`Object` **to** -  
+**setter(fn)** -  
