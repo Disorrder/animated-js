@@ -1,16 +1,17 @@
 {
   "name": "animated-js",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "main": "dist/animated.js",
   "devDependencies": {
-    "webpack": "^3.8.1"
+    "webpack": "^4.5.0",
+    "webpack-cli": "^2.0.14"
   },
   "dependencies": {},
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --mode production",
     "start": "npm run build"
   },
   "engine": {
-    "node": ">=6.6.0"
+    "node": ">=9.0.0"
   }
 }

@@ -1,6 +1,7 @@
 'use strict';
 const path = require('path');
 const webpack = require('webpack');
+const pkg = require('./package.json');
 
 module.exports = {
     context: path.resolve('./src'),
@@ -8,5 +9,10 @@ module.exports = {
     output: {
         path: path.resolve('./dist'),
         filename: "animated.js"
-    }
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+            VERSION: JSON.stringify(pkg.version),
+        })
+    ]
 };

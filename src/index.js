@@ -2,7 +2,7 @@ import EventEmitter from './EventEmitter';
 import easing from './easing';
 
 export default class Animated {
-    static get version() { return '0.1.1'; }
+    static get version() { return VERSION; }
     static get easing() { return easing; }
 
     constructor(options = {}) {
