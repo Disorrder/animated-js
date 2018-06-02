@@ -1,6 +1,13 @@
 # animated-js
 Timeline for simple animations. Inspired by @animejs
 
+## Installation
+Using npm:
+```
+npm i --save npm i @disorrder/animated --only=production
+```
+*Yeah, all good names was busy :(*
+
 ### Basic usage
 ```
 var target = {

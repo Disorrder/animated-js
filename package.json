@@ -1,5 +1,6 @@
 {
-  "name": "animated-js",
+  "name": "@disorrder/animated",
+  "description": "Light-weight library for animating stuff, inspired by @animejs",
   "version": "0.2.0",
   "main": "dist/animated.js",
   "devDependencies": {
