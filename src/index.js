@@ -159,7 +159,8 @@ export default class Animated {
                 if (!anim._target) return console.warn('Animation target is not defined', anim, frame, this);
                 if (!anim.from) anim.from = {};
                 anim._delta = {};
-                for (let k in anim.to) {
+                if (anim.by) Object.assign(anim._delta, anim.delta);
+                for (let k in anim.to || {}) {
                     let from = anim.from[k] != null ? anim.from[k] : anim._target[k];
                     anim._delta[k] = anim.to[k] - from;
                 }

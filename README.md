@@ -9,7 +9,7 @@ npm i --save npm i @disorrder/animated --only=production
 *Yeah, all good names was busy :(*
 
 ### Basic usage
-```
+```javascript
 var target = {
     position: {x: 1, y: 2, z: 3}
 };
@@ -48,7 +48,26 @@ var anim = new Animated()
 **complete(frame)** -  
 
 ## Animatable type
-`Object` **target** -  
-`Object` **from** -  
-`Object` **to** -  
-**setter(fn)** -  
+`Object``Function` **target** - target of animation  
+`Object` **from** - start params  
+`Object` **to** - end params  
+`Object` **by** - if you want to translate some params by value  
+`Function` **setter(target)** - call every frame of animation with `target` in first argument  
+
+### One more example
+This code animates `position.x` from 10 to 20 and `position.y` from initial to initial+30.  
+So, if initial `y` is 100 it will be animated from 100 to 130.  
+```javascript
+var entity = new pc.Entity(); // new THREE.Object3D() for Three.js
+var position = entity.getLocalPosition(); // imagine you don't know values of x, y and z
+var anim = new Animated()
+.add({
+    animate: [{
+        target: position,
+        from: {x: 10},
+        to: {x: 20},
+        by: {y: 30},
+    }],
+})
+.play();
+```
