@@ -159,10 +159,19 @@ export default class Animated {
                 if (!anim._target) return console.warn('Animation target is not defined', anim, frame, this);
                 if (!anim.from) anim.from = {};
                 anim._delta = {};
-                if (anim.by) Object.assign(anim._delta, anim.by);
-                for (let k in anim.to || {}) {
-                    let from = anim.from[k] != null ? anim.from[k] : anim._target[k];
-                    anim._delta[k] = anim.to[k] - from;
+
+                // if (anim.by) Object.assign(anim._delta, anim.by);
+                if (anim.by) { 
+                    for (let k in anim.by) { 
+                        if (!anim.from[k]) anim.from[k] = anim._target[k]; 
+                        anim._delta[k] = anim.by[k]; 
+                    } 
+                } 
+                if (anim.to) { 
+                    for (let k in anim.to) { 
+                        if (!anim.from[k]) anim.from[k] = anim._target[k]; 
+                        anim._delta[k] = anim.to[k] - anim.from[k]; 
+                    } 
                 }
             });
         }
@@ -179,17 +188,31 @@ export default class Animated {
             if (frame._time === 0) frame._time = 1;
         }
 
+        // if (frame.animate) this._moveTo(frame, frame._time); 
         if (frame.animate) {
             this.__t = frame.easing(frame._time);
             frame.animate.forEach((anim) => {
                 if (!anim._target) return;
                 for (this.__k in anim._delta) {
-                    anim._target[this.__k] = anim.to[this.__k] - (1 - this.__t) * anim._delta[this.__k];
+                    // anim._target[this.__k] = anim.to[this.__k] - (1 - this.__t) * anim._delta[this.__k];
+                    anim._target[this.__k] = anim.from[this.__k] + this.__t * anim._delta[this.__k];
                 }
                 if (anim.setter) anim.setter(anim._target);
             });
         }
         if (frame.run) frame.run(frame);
+    }
+
+    _moveTo(frame, t) { 
+        // if (t == null) t = frame._time; //? not necessary mb 
+        t = frame.easing(t); 
+        frame.animate.forEach((anim) => { 
+            if (!anim._target) return; 
+            for (this.__k in anim._delta) { 
+                anim._target[this.__k] = anim.from[this.__k] + t * anim._delta[this.__k]; 
+            } 
+            if (anim.setter) anim.setter(anim._target); 
+        }); 
     }
 
     _complete(frame) {

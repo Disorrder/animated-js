@@ -1,7 +1,7 @@
 {
   "name": "@disorrder/animated",
   "description": "Light-weight library for animating stuff, inspired by @animejs",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "main": "dist/animated.js",
   "devDependencies": {
     "webpack": "^4.5.0",
@@ -10,8 +10,7 @@
   "dependencies": {},
   "scripts": {
     "build": "webpack --mode production",
-    "start": "npm run build",
-    "publish": "npm run build && npm publish"
+    "start": "npm run build"
   },
   "engine": {
     "node": ">=9.0.0"
