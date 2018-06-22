@@ -231,7 +231,8 @@ if (!window.Animated) window.Animated = Animated;
 
 // PlayCanvas
 
-if (typeof pc !== 'undefined') {
+if (window.pc) {
+    let pc = window.pc;
     class AnimatedPC extends Animated {
         constructor(options = {}) {
             super(options);
