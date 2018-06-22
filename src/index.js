@@ -236,7 +236,7 @@ if (window.pc) {
     class AnimatedPC extends Animated {
         constructor(options = {}) {
             super(options);
-            this.app = options.app || pc.script.app;
+            this.app = options.app || pc.Application.getApplication();
         }
 
         startAnimationLoop() {

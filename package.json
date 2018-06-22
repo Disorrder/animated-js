@@ -1,7 +1,7 @@
 {
   "name": "@disorrder/animated",
   "description": "Light-weight library for animating stuff, inspired by @animejs",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "main": "dist/animated.js",
   "devDependencies": {
     "webpack": "^4.5.0",
