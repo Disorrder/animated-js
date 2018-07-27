@@ -1,8 +1,8 @@
 {
-  "name": "@disorrder/animated",
+  "name": "@disorrder/timeline",
   "description": "Light-weight library for animating stuff, inspired by @animejs",
-  "version": "0.2.5",
-  "main": "dist/animated.js",
+  "version": "0.3.0",
+  "main": "dist/timeline.js",
   "devDependencies": {
     "webpack": "^4.5.0",
     "webpack-cli": "^2.0.14"

@@ -37,7 +37,7 @@ class EventEmitter {
 }
 // ------
 
-class Animated {
+class Timeline {
     static get version() { return '0.1.1'; }
     static get easing() { return easing; }
 
@@ -75,7 +75,7 @@ class Animated {
     }
 
     add(frame) {
-        if (frame instanceof Animated) {
+        if (frame instanceof Timeline) {
             frame.keyframes.forEach((v) => this._addFrame(v));
         } else {
             this._addFrame(frame);
@@ -87,7 +87,7 @@ class Animated {
         if (frame.delay == null) frame.delay = 0;
         if (frame.duration == null) frame.duration = 1000;
         if (frame.repeat == null) frame.repeat = 1;
-        if (frame.easing == null) frame.easing = Animated.easing.QuadraticIn;
+        if (frame.easing == null) frame.easing = Timeline.easing.QuadraticIn;
         // if (frame.animate && !Array.isArray(frame.animate)) frame.animate = [frame.animate];
         this._timeline = this;
 
@@ -231,7 +231,7 @@ class Animated {
 
     static __test() {
         var target = {position: {x: 10}};
-        var anim = new Animated()
+        var anim = new Timeline()
         .add({
             delay: 1000,
             animate: [{
@@ -256,14 +256,14 @@ class Animated {
     }
 }
 
-EventEmitter.mixin(Animated);
+EventEmitter.mixin(Timeline);
 
-if (!window.Animated) window.Animated = Animated;
+if (!window.Timeline) window.Timeline = Timeline;
 
 // PlayCanvas
 
 if (typeof pc !== 'undefined') {
-    class AnimatedPC extends Animated {
+    class TimelinePC extends Timeline {
         constructor(options = {}) {
             super(options);
             this.app = options.app || pc.script.app;
@@ -276,8 +276,8 @@ if (typeof pc !== 'undefined') {
         _tick() { /* noop */ }
     }
 
-    if (pc.Animated) console.warn('pc.Animated is already exists!');
-    pc.Animated = AnimatedPC;
+    if (pc.Timeline) console.warn('pc.Timeline is already exists!');
+    pc.Timeline = TimelinePC;
 }
 
 // utils

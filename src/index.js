@@ -1,7 +1,7 @@
 import EventEmitter from './EventEmitter';
 import easing from './easing';
 
-export default class Animated {
+export default class Timeline {
     static get version() { return VERSION; }
     static get easing() { return easing; }
 
@@ -39,7 +39,7 @@ export default class Animated {
     }
 
     add(frame) {
-        if (frame instanceof Animated) {
+        if (frame instanceof Timeline) {
             frame.keyframes.forEach((v) => this._addFrame(v));
         } else {
             this._addFrame(frame);
@@ -51,7 +51,7 @@ export default class Animated {
         if (frame.delay == null) frame.delay = 0;
         if (frame.duration == null) frame.duration = 1000;
         if (frame.repeat == null) frame.repeat = 1;
-        if (frame.easing == null) frame.easing = Animated.easing.QuadraticIn;
+        if (frame.easing == null) frame.easing = Timeline.easing.QuadraticIn;
         // if (frame.animate && !Array.isArray(frame.animate)) frame.animate = [frame.animate];
         this._timeline = this;
 
@@ -223,7 +223,7 @@ export default class Animated {
 
     static __test() {
         var target = {position: {x: 10}};
-        var anim = new Animated()
+        var anim = new Timeline()
         .add({
             delay: 1000,
             animate: [{
@@ -248,15 +248,15 @@ export default class Animated {
     }
 }
 
-EventEmitter.mixin(Animated);
+EventEmitter.mixin(Timeline);
 
-if (!window.Animated) window.Animated = Animated;
+if (!window.Timeline) window.Timeline = Timeline;
 
 // PlayCanvas
 
 if (window.pc) {
     let pc = window.pc;
-    class AnimatedPC extends Animated {
+    class TimelinePC extends Timeline {
         constructor(options = {}) {
             super(options);
             this.app = options.app || pc.Application.getApplication();
@@ -269,8 +269,8 @@ if (window.pc) {
         _tick() { /* noop */ }
     }
 
-    if (pc.Animated) console.warn('pc.Animated is already exists!');
-    pc.Animated = AnimatedPC;
+    if (pc.Timeline) console.warn('pc.Timeline is already exists!');
+    pc.Timeline = TimelinePC;
 }
 
 // utils

@@ -1,10 +1,12 @@
-# animated-js
-Timeline for simple animations. Inspired by @animejs
+# timeline-js (was renamed from animated-js)
+Timeline for simple animations. Inspired by @animejs.  
+I'm using it in my WebVR projects with Three.js or Playcanvas engine.  
+Please report all issues or ideas you will find ;)  
 
 ## Installation
 Using npm:
 ```
-npm i --save npm i @disorrder/animated --only=production
+npm i --save @disorrder/timeline --only=production
 ```
 *Yeah, all good names was busy :(*
 
@@ -13,7 +15,7 @@ npm i --save npm i @disorrder/animated --only=production
 var target = {
     position: {x: 1, y: 2, z: 3}
 };
-var anim = new Animated()
+var anim = new Timeline()
 .add({
     repeat: 1,
     delay: 0,
@@ -29,7 +31,7 @@ var anim = new Animated()
 .play();
 ```
 
-## Animated methods
+## Timeline methods
 **add(frame)**  
 **play()**  
 **pause()**  
@@ -60,7 +62,7 @@ So, if initial `y` is 100 it will be animated from 100 to 130.
 ```javascript
 var entity = new pc.Entity(); // new THREE.Object3D() for Three.js
 var position = entity.getLocalPosition(); // imagine you don't know values of x, y and z
-var anim = new Animated()
+var anim = new Timeline()
 .add({
     animate: [{
         target: position,
