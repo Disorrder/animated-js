@@ -9,7 +9,7 @@ export default class Timeline {
         this.active = false;
         this.__name = options.name;
 
-        this.keyframes = [];
+        this.keyframes = options.frames || [];
 
         this.time = 0;
         this.timeEnd = 0;
@@ -58,13 +58,14 @@ export default class Timeline {
         this.keyframes.push(frame);
     }
 
-    checkFrames() {
+    calculateFrames() {
+        this.duration = 0;
         this.keyframes.forEach((frame, i) => {
             var prevKeyframe = this.keyframes[i-1] || {};
             var startTime = prevKeyframe._endTime || 0;
+            if (frame.delay) startTime += frame.delay;
             if (frame.offset != null) startTime = frame.offset;
             if (frame.offset === 'prev') startTime = prevKeyframe._startTime || 0;
-            if (frame.delay) startTime += frame.delay;
             frame._startTime = startTime;
             frame._endTime = startTime + frame.duration * frame.repeat;
             frame._began = false;
@@ -72,13 +73,10 @@ export default class Timeline {
 
             this.duration = Math.max(frame._endTime, this.duration);
         });
-
-        this.startTime = this.keyframes[0]._startTime;
-        this.endTime = this.startTime + this.duration; // this.lastKeyframe._endTime;
     }
 
     play() {
-        this.checkFrames();
+        this.calculateFrames();
         this.active = true;
         this.fire('play');
         return this;
@@ -138,7 +136,7 @@ export default class Timeline {
         }
         this.fire('update', dt);
 
-        if (this.time >= this.endTime) {
+        if (this.time >= this.duration) {
             this.repeat--;
             if (this.repeat) {
                 return this.replay();
@@ -220,6 +218,7 @@ export default class Timeline {
         frame._completed = true;
         if (frame.complete) frame.complete(frame);
     }
+
 
     static __test() {
         var target = {position: {x: 10}};
