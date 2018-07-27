@@ -9,7 +9,7 @@ export default class Timeline {
         this.active = false;
         this.__name = options.name;
 
-        this.keyframes = options.frames || [];
+        this.keyframes = [];
 
         this.time = 0;
         this.timeEnd = 0;
@@ -18,6 +18,7 @@ export default class Timeline {
         this.duration = 0;
 
         setTimeout(this.startAnimationLoop.bind(this));
+        if (options.keyframes) this.add(options.keyframes);
     }
 
     get lastKeyframe() {
@@ -38,9 +39,10 @@ export default class Timeline {
         this._lastTick = time;
     }
 
-    add(frame) {
-        if (frame instanceof Timeline) {
-            frame.keyframes.forEach((v) => this._addFrame(v));
+    add(frame) { // support single frame, array and Timeline
+        if (frame instanceof Timeline) frame = frame.keyframes;
+        if (Array.isArray(frame)) {
+            frame.forEach((v) => this._addFrame(v));
         } else {
             this._addFrame(frame);
         }
