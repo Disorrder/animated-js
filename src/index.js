@@ -160,16 +160,15 @@ export default class Timeline {
                 if (!anim.from) anim.from = {};
                 anim._delta = {};
 
-                // if (anim.by) Object.assign(anim._delta, anim.by);
                 if (anim.by) { 
                     for (let k in anim.by) { 
-                        if (!anim.from[k]) anim.from[k] = anim._target[k]; 
+                        if (anim.from[k] == null) anim.from[k] = anim._target[k]; 
                         anim._delta[k] = anim.by[k]; 
                     } 
                 } 
                 if (anim.to) { 
                     for (let k in anim.to) { 
-                        if (!anim.from[k]) anim.from[k] = anim._target[k]; 
+                        if (anim.from[k] == null) anim.from[k] = anim._target[k]; 
                         anim._delta[k] = anim.to[k] - anim.from[k]; 
                     } 
                 }
