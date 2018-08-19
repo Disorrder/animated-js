@@ -8,7 +8,7 @@ module.exports = {
     entry: './index.js',
     output: {
         path: path.resolve('./dist'),
-        filename: "animated.js"
+        filename: "timeline.js"
     },
     plugins: [
         new webpack.DefinePlugin({
