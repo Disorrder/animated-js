@@ -40,9 +40,19 @@ export default class Timeline {
     }
 
     add(frame) { // support single frame, array and Timeline
-        if (frame instanceof Timeline) frame = frame.keyframes;
+        if (frame instanceof Timeline) {
+            let timeline = frame;
+            frame = timeline.keyframes.map(frame => {
+                frame = {
+                    ...frame,
+                    delay: frame.delay * timeline.timeScale,
+                    duration: frame.duration * timeline.timeScale,
+                };
+                return frame;
+            })
+        };
         if (Array.isArray(frame)) {
-            frame.forEach((v) => this._addFrame(v));
+            frame.forEach(v => this._addFrame(v));
         } else {
             this._addFrame(frame);
         }
