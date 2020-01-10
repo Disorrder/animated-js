@@ -13,40 +13,50 @@ export default class Timeline {
 
         this.time = 0;
         this.timeEnd = 0;
-        this.timeScale = options.timeScale || 1;
-        this.repeat = options.repeat || 1;
+        this.timeScale = 1;
+        this.repeat = 1;
         this.duration = 0;
+        this.setOptions(options)
 
-        setTimeout(this.startAnimationLoop.bind(this));
+        this.timer = {
+            time: 0,
+            dt: 0
+        };
+        setTimeout(this.animationLoop.bind(this));
         if (options.keyframes) this.add(options.keyframes);
+    }
+
+    setOptions(options = {}) {
+        this._options = options = {
+            repeat: 1,
+            ...options
+        };
+
+        this.repeat = options.repeat;
+        if (options.timeScale) this.timeScale = options.timeScale;
     }
 
     get lastKeyframe() {
         return this.keyframes[this.keyframes.length-1] || null;
     }
 
-    startAnimationLoop() {
-        this._tickBound = this._tick.bind(this);
-        requestAnimationFrame((time) => {
-            this._lastTick = time;
-            this._tick(time);
-        });
-    }
-
-    _tick(time = this._lastTick) {
-        requestAnimationFrame(this._tickBound);
-        this._update(time - this._lastTick || 16);
-        this._lastTick = time;
+    animationLoop(time = 0) {
+        this.timer.dt = time - this.timer.time;
+        this.timer.time = time;
+        this._update(this.timer.dt);
+        requestAnimationFrame(this.animationLoop.bind(this));
     }
 
     add(frame) { // support single frame, array and Timeline
         if (frame instanceof Timeline) {
+            // TODO: ref to `timeline` property and save timeline for animation
+            // Also calculate timeScale by durations
             let timeline = frame;
             frame = timeline.keyframes.map(frame => {
                 frame = {
                     ...frame,
-                    delay: frame.delay * timeline.timeScale,
-                    duration: frame.duration * timeline.timeScale,
+                    delay: frame.delay / timeline.timeScale,
+                    duration: frame.duration / timeline.timeScale,
                 };
                 return frame;
             })
@@ -108,6 +118,7 @@ export default class Timeline {
             frame._began = false;
             frame._completed = false;
         });
+        this.setOptions(this._options);
         return this;
     }
 
@@ -129,6 +140,7 @@ export default class Timeline {
     _update(dt = 0) {
         if (!this.active) return;
         dt *= this.timeScale;
+        if (!dt) return;
         // increment time here?
 
         this.keyframes.forEach((frame) => {
@@ -149,8 +161,7 @@ export default class Timeline {
         this.fire('update', dt);
 
         if (this.time >= this.duration) {
-            this.repeat--;
-            if (this.repeat) {
+            if (--this.repeat > 0) {
                 return this.replay();
             }
             this.stop();
@@ -272,11 +283,9 @@ if (window.pc) {
             this.app = options.app || pc.Application.getApplication();
         }
 
-        startAnimationLoop() {
+        animationLoop() {
             this.app.on('update', (dt) => this._update(dt * 1000), this);
         }
-
-        _tick() { /* noop */ }
     }
 
     if (pc.Timeline) console.warn('pc.Timeline is already exists!');
