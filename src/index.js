@@ -22,7 +22,6 @@ export default class Timeline {
             time: 0,
             dt: 0
         };
-        setTimeout(this.animationLoop.bind(this));
         if (options.keyframes) this.add(options.keyframes);
     }
 
@@ -40,7 +39,16 @@ export default class Timeline {
         return this.keyframes[this.keyframes.length-1] || null;
     }
 
-    animationLoop(time = 0) {
+    startAnimationLoop() {
+        this.timer.time = performance.now();
+        this.animationLoop(this.timer.time);
+    }
+
+    animationLoop(time) {
+        if (!this.active) {
+            this.timer.time = 0;
+            return;
+        }
         this.timer.dt = time - this.timer.time;
         this.timer.time = time;
         this._update(this.timer.dt);
@@ -101,6 +109,8 @@ export default class Timeline {
         this.calculateFrames();
         this.active = true;
         this.fire('play');
+
+        this.startAnimationLoop();
         return this;
     }
 
