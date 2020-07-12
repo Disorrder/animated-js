@@ -5,7 +5,8 @@
   "main": "dist/timeline.js",
   "devDependencies": {
     "webpack": "^4.16.5",
-    "webpack-cli": "^3.1.0"
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {},
   "scripts": {
