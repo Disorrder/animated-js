@@ -27,11 +27,4 @@ export default class EventEmitter {
         }
         return this;
     }
-
-    static mixin(target) {
-        Object.getOwnPropertyNames(EventEmitter.prototype).forEach((k) => {
-            if (k === 'constructor') return;
-            target.prototype[k] = EventEmitter.prototype[k];
-        });
-    }
 }

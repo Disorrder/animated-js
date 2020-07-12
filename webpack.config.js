@@ -8,7 +8,9 @@ module.exports = {
     entry: './index.js',
     output: {
         path: path.resolve('./dist'),
-        filename: "timeline.js"
+        filename: "timeline.js",
+        library: "timeline",
+        libraryTarget: "umd",
     },
     plugins: [
         new webpack.DefinePlugin({

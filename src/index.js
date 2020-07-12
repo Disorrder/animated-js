@@ -1,9 +1,25 @@
 import EventEmitter from './EventEmitter';
+import Timer from "./Timer";
 import easing from './easing';
+import {clamp, mixin} from "./utils";
 
 export default class Timeline {
     static get version() { return VERSION; }
     static get easing() { return easing; }
+
+    static defaultAnimation(time = 0) {
+        if (this.defaultAnimation) {
+            requestAnimationFrame(this.defaultAnimation);
+        }
+        this.update(time);
+    }
+
+    // static items = new Set(); // TODO: Typescript
+    static update(time) {
+        this.items.forEach(item => {
+            item.update(time);
+        });
+    }
 
     constructor(options = {}) {
         this.active = false;
@@ -18,11 +34,9 @@ export default class Timeline {
         this.duration = 0;
         this.setOptions(options)
 
-        this.timer = {
-            time: 0,
-            dt: 0
-        };
-        if (options.keyframes) this.add(options.keyframes);
+        this.timer = new Timer();
+
+        Timeline.items.add(this);
     }
 
     setOptions(options = {}) {
@@ -44,15 +58,12 @@ export default class Timeline {
         this.animationLoop(this.timer.time);
     }
 
-    animationLoop(time) {
+    update(time) {
         if (!this.active) {
-            this.timer.time = 0;
             return;
         }
-        this.timer.dt = time - this.timer.time;
-        this.timer.time = time;
+        this.timer.setTime(time);
         this._update(this.timer.dt);
-        requestAnimationFrame(this.animationLoop.bind(this));
     }
 
     add(frame) { // support single frame, array and Timeline
@@ -106,23 +117,34 @@ export default class Timeline {
     }
 
     play() {
-        this.calculateFrames();
+        if (this.active) {
+            throw new Error("Timeline is already playing.");
+        }
+        if (this.time === 0) { // start
+            this.calculateFrames();
+            this.promise = new Promise((resolve, reject) => {
+                this.on('complete', resolve);
+                this.on('stop', reject);
+            });
+        }
         this.active = true;
-        this.fire('play');
-
-        this.startAnimationLoop();
+        this.timer.start();
+        this.emit('play');
         return this;
     }
 
     pause() {
+        // throw "Not implemented";
         this.active = false;
-        this.fire('pause');
+        this.timer.stop();
+        this.emit('pause');
         return this;
     }
 
     stop() {
         this.active = false;
-        this.fire('stop');
+        this.emit('stop');
+        this.timer.stop();
         this.time = 0;
         this.keyframes.forEach((frame) => {
             frame._began = false;
@@ -139,7 +161,7 @@ export default class Timeline {
         });
         this.active = true;
         this.time = 0;
-        this.fire('replay');
+        this.emit('replay');
         return this;
     }
 
@@ -166,16 +188,16 @@ export default class Timeline {
         });
 
         if (this.time <= 0) {
-            this.fire('begin');
+            this.emit('begin');
         }
-        this.fire('update', dt);
+        this.emit('update', dt);
 
         if (this.time >= this.duration) {
             if (--this.repeat > 0) {
                 return this.replay();
             }
             this.stop();
-            this.fire('complete');
+            this.emit('complete');
             return;
         }
 
@@ -211,7 +233,7 @@ export default class Timeline {
 
     _run(frame) {
         frame._time = (this.time - frame._startTime) / frame.duration;
-        frame._time = Math.clamp(frame._time, 0, frame.repeat);
+        frame._time = clamp(frame._time, 0, frame.repeat);
 
         if (frame._time > 1) { // repeating. TODO: add yoyo
             frame._time -= Math.floor(frame._time);
@@ -250,65 +272,37 @@ export default class Timeline {
         frame._completed = true;
         if (frame.complete) frame.complete(frame);
     }
-
-
-    static __test() {
-        var target = {position: {x: 10}};
-        var anim = new Timeline()
-        .add({
-            delay: 1000,
-            animate: [{
-                target: target.position,
-                to: {x: 20}
-            }],
-            begin() { console.log('frame 0 begin', target.position.x, anim.time.toFixed(2)); },
-            complete() { console.log('frame 0 complete', target.position.x, anim.time.toFixed(2)); },
-            run() { console.log('frame 0 run', target.position.x, anim.time.toFixed(2)); }
-        })
-        .add({
-            duration: 500,
-            animate: [{
-                target: target.position,
-                to: {x: 0}
-            }],
-            begin() { console.log('frame 1 begin', target.position.x, anim.time.toFixed(2)); },
-            complete() { console.log('frame 1 complete', target.position.x, anim.time.toFixed(2)); },
-            run() { console.log('frame 1 run', target.position.x, anim.time.toFixed(2)); }
-        })
-        .play();
-    }
 }
 
-EventEmitter.mixin(Timeline);
+Timeline.items = new Set();
+Timeline.defaultAnimation = Timeline.defaultAnimation.bind(Timeline);
 
-if (!window.Timeline) window.Timeline = Timeline;
+mixin(EventEmitter)(Timeline); // TODO: decorator
+
+Timeline.defaultAnimation();
+
+// if (!'Timeline' in window) window.Timeline = Timeline;
+
+
+
+
+
 
 // PlayCanvas
 
-if (window.pc) {
-    let pc = window.pc;
-    class TimelinePC extends Timeline {
-        constructor(options = {}) {
-            super(options);
-            this.app = options.app || pc.Application.getApplication();
-        }
+// if ('pc' in window) {
+//     let pc = window.pc;
+//     class TimelinePC extends Timeline {
+//         constructor(options = {}) {
+//             super(options);
+//             this.app = options.app || pc.Application.getApplication();
+//         }
 
-        animationLoop() {
-            this.app.on('update', (dt) => this._update(dt * 1000), this);
-        }
-    }
+//         animationLoop() {
+//             this.app.on('update', (dt) => this._update(dt * 1000), this);
+//         }
+//     }
 
-    if (pc.Timeline) console.warn('pc.Timeline is already exists!');
-    pc.Timeline = TimelinePC;
-}
-
-// utils
-if (!Math.clamp) Math.clamp = function (value, min, max) {
-    if (value >= max) {
-        return max;
-    }
-    if (value <= min) {
-        return min;
-    }
-    return value;
-};
+//     if (pc.Timeline) console.warn('pc.Timeline is already exists!');
+//     pc.Timeline = TimelinePC;
+// }
