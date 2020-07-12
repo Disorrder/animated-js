@@ -4,7 +4,7 @@
   "version": "0.4.3",
   "main": "dist/timeline.js",
   "devDependencies": {
-    "webpack": "^4.16.5",
+    "jest": "^26.1.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
   },
@@ -12,7 +12,8 @@
   "scripts": {
     "build": "webpack --mode production",
     "build-dev": "webpack --mode development",
-    "start": "npm run build"
+    "start": "npm run build",
+    "test": "npm run build && jest"
   },
   "engine": {
     "node": ">=9.0.0"
