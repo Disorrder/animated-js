@@ -1,7 +1,7 @@
 {
   "name": "@disorrder/timeline",
   "description": "Light-weight library for animating stuff, inspired by @animejs",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "main": "dist/timeline.js",
   "devDependencies": {
     "jest": "^26.1.0",
